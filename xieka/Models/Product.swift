@@ -35,8 +35,8 @@ struct Product: Identifiable, Codable, Hashable {
         products.append(Product(id: UUID(), name: "Frozen Snow Crab Legs", price: 328.0, originalPrice: 398.0, description: "Flash frozen to lock freshness, ready to eat after thawing or for hot pot.", imageName: "松叶蟹腿冷冻装", tags: ["Family", "New"]))
         products.append(Product(id: UUID(), name: "Spicy Crab Pre-cooked", price: 99.0, originalPrice: 129.0, description: "Stir-fried flavor, heat and eat, perfect for late night snack.", imageName: "香辣蟹预制菜", tags: ["Popular", "New"]))
         products.append(Product(id: UUID(), name: "Crab Roe Noodles Gift Box", price: 68.0, originalPrice: 88.0, description: "A bowl of noodles, half a bowl of crab, rich and fragrant, super value experience.", imageName: "蟹黄面兑换券", tags: ["New"]))
-        products.append(Product(id: UUID(), name: "Premium Crab Roe Butter Box", price: 688.0, originalPrice: 888.0, description: "Supreme crab roe butter, perfect for rice, rich and fragrant.", imageName: "crab_roe_butter_gift_box", tags: ["Luxury", "Gourmet"]))
-        products.append(Product(id: UUID(), name: "Crab Stuffed Orange", price: 128.0, originalPrice: 168.0, description: "Song Dynasty elegant dish, orange fragrance and crab fat, unique flavor.", imageName: "crab_stuffed_orange_dish", tags: ["Culture", "Gourmet"]))
+        products.append(Product(id: UUID(), name: "Premium Crab Roe Butter Box", price: 688.0, originalPrice: 888.0, description: "Supreme crab roe butter, perfect for rice, rich and fragrant.", imageName: "全家福海陆大餐", tags: ["Luxury", "Gourmet"]))
+        products.append(Product(id: UUID(), name: "Crab Stuffed Orange", price: 128.0, originalPrice: 168.0, description: "Song Dynasty elegant dish, orange fragrance and crab fat, unique flavor.", imageName: "神秘盲盒·蟹", tags: ["Culture", "Gourmet"]))
 
 
         

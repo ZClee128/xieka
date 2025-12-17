@@ -3,21 +3,22 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject var store: AppStore
     @State private var selectedCategory: String = "All"
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
     let categories = ["All", "Selected", "Family", "Gift", "New"]
     
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: 20) {
+                VStack(spacing: 24) {
                     // Header Section
                     HStack {
                         VStack(alignment: .leading) {
                             Text("Welcome Back")
-                                .font(.subheadline)
+                                .font(isRegularLayout ? .title3 : .subheadline)
                                 .foregroundColor(.gray)
                             Text("Crab Gift Market")
-                                .font(.largeTitle)
+                                .font(isRegularLayout ? .system(size: 36, weight: .bold) : .largeTitle)
                                 .fontWeight(.bold)
                                 .foregroundStyle(
                                     LinearGradient(
@@ -27,24 +28,25 @@ struct HomeView: View {
                                     )
                                 )
                         }
-                        Spacer()
+                        Spacer(minLength: isRegularLayout ? 40 : 0)
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, isRegularLayout ? 40 : 16)
                     .padding(.top)
                     
                     // Hero Section / Featured
                     if let featuredProduct = store.products.first(where: { $0.name == "Golden King Crab" }) {
                         NavigationLink(destination: ProductDetailView(product: featuredProduct)) {
                             FeaturedCardView()
-                                .frame(height: 220)
-                                .padding(.horizontal)
+                                .frame(height: isRegularLayout ? 300 : 220)
+                                .frame(maxWidth: isRegularLayout ? 720 : .infinity)
+                                .padding(.horizontal, isRegularLayout ? 40 : 16)
                                 .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
                         }
                     }
                     
                     // Categories
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 15) {
+                        HStack(spacing: isRegularLayout ? 18 : 15) {
                             ForEach(categories, id: \.self) { category in
                                 CategoryPill(title: category, isSelected: selectedCategory == category) {
                                     withAnimation {
@@ -53,18 +55,19 @@ struct HomeView: View {
                                 }
                             }
                         }
-                        .padding(.horizontal)
+                        .padding(.horizontal, isRegularLayout ? 40 : 16)
                     }
                     
                     // Product Grid
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
+                    LazyVGrid(columns: gridColumns, spacing: isRegularLayout ? 24 : 20) {
                         ForEach(filteredProducts, id: \.id) { product in
                             NavigationLink(destination: ProductDetailView(product: product)) {
                                 ProductCardView(product: product)
                             }
                         }
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, isRegularLayout ? 40 : 16)
+                    .frame(maxWidth: isRegularLayout ? 900 : .infinity, alignment: .center)
                     .padding(.bottom, 80) // Space for tab bar
                 }
             }
@@ -78,6 +81,19 @@ struct HomeView: View {
             return store.products
         }
         return store.products.filter { $0.tags.contains(selectedCategory) }
+    }
+    
+    private var isRegularLayout: Bool {
+        horizontalSizeClass == .regular
+    }
+    
+    private var gridColumns: [GridItem] {
+        if isRegularLayout {
+            // On iPad use 3 responsive columns to avoid crowding and huge cards
+            return Array(repeating: GridItem(.flexible(minimum: 220), spacing: 32), count: 3)
+        } else {
+            return [GridItem(.flexible()), GridItem(.flexible())]
+        }
     }
 }
 
@@ -121,13 +137,18 @@ struct CategoryPill: View {
     let title: String
     let isSelected: Bool
     let action: () -> Void
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    private var isRegularLayout: Bool {
+        horizontalSizeClass == .regular
+    }
     
     var body: some View {
         Button(action: action) {
             Text(title)
+                .font(isRegularLayout ? .title3 : .body)
                 .fontWeight(.medium)
-                .padding(.vertical, 10)
-                .padding(.horizontal, 20)
+                .padding(.vertical, isRegularLayout ? 14 : 10)
+                .padding(.horizontal, isRegularLayout ? 28 : 20)
                 .background(isSelected ? Color.orange : Color.white)
                 .foregroundColor(isSelected ? .white : .gray)
                 .cornerRadius(25)
@@ -138,6 +159,10 @@ struct CategoryPill: View {
 
 struct ProductCardView: View {
     let product: Product
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    private var isRegularLayout: Bool {
+        horizontalSizeClass == .regular
+    }
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -147,26 +172,26 @@ struct ProductCardView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(minWidth: 0, maxWidth: .infinity)
-                    .frame(height: 120)
+                    .frame(height: isRegularLayout ? 160 : 120)
                     .clipped()
             }
-            .frame(height: 120)
+            .frame(height: isRegularLayout ? 160 : 120)
             .cornerRadius(15)
             
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: isRegularLayout ? 10 : 4) {
                 Text(product.name)
-                    .font(.headline)
+                    .font(isRegularLayout ? .title3 : .headline)
                     .lineLimit(1)
                     .foregroundColor(.primary)
                 
                 Text(product.description)
-                    .font(.caption)
+                    .font(isRegularLayout ? .body : .caption)
                     .foregroundColor(.secondary)
                     .lineLimit(2)
                 
                 HStack {
                     Text("¥\(Int(product.price))")
-                        .font(.title3)
+                        .font(isRegularLayout ? .title2 : .title3)
                         .fontWeight(.bold)
                         .foregroundColor(.orange)
                     
