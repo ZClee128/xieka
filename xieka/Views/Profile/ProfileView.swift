@@ -89,28 +89,37 @@ struct ProfileView: View {
             .sheet(isPresented: $showingLoginSheet) {
                 LoginView()
             }
-            .actionSheet(isPresented: $showingContactActionSheet) {
-                ActionSheet(title: Text("Contact Support"), message: Text("Choose a method"), buttons: [
-                    .default(Text("Send Email (zscbxbeueu@163.com)")) {
-                        // Email action (simulated)
-                        print("Email tapped")
-                    },
-                    .default(Text("Call Hotline (+1 800-888-8888)")) {
-                        // Phone action (simulated)
-                         if let url = URL(string: "tel://18008888888") {
-                            UIApplication.shared.open(url)
-                        }
-                    },
-                    .cancel(Text("Cancel"))
-                ])
+            // Use modern confirmation dialogs instead of legacy action sheets.
+            // On iPad these present as centered popovers and avoid the cramped
+            // bottom glass effect that App Review flagged.
+            .confirmationDialog(
+                "Contact Support",
+                isPresented: $showingContactActionSheet,
+                titleVisibility: .visible
+            ) {
+                Button("Send Email (zscbxbeueu@163.com)") {
+                    // Email action (simulated)
+                    print("Email tapped")
+                }
+                Button("Call Hotline (+1 800-888-8888)") {
+                    // Phone action (simulated)
+                    if let url = URL(string: "tel://18008888888") {
+                        UIApplication.shared.open(url)
+                    }
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Choose a method")
             }
-            .actionSheet(isPresented: $showingDeleteAlert) {
-                ActionSheet(title: Text("Delete Account"), message: Text("Are you sure? This cannot be undone."), buttons: [
-                    .destructive(Text("Delete")) {
-                        store.logout()
-                    },
-                    .cancel(Text("Cancel"))
-                ])
+            // Use a classic alert for the destructive delete action so that tapping
+            // "Delete Account" shows a centered modal dialog.
+            .alert("Delete Account", isPresented: $showingDeleteAlert) {
+                Button("Delete", role: .destructive) {
+                    store.logout()
+                }
+                Button("Cancel", role: .cancel) { }
+            } message: {
+                Text("Are you sure? This cannot be undone.")
             }
         }
     }
@@ -162,14 +171,6 @@ struct LoginView: View {
                     .disabled(timeRemaining > 0 || email.isEmpty)
                 }
                 
-                // Test Account Hint
-                HStack {
-                    Image(systemName: "info.circle")
-                    Text("Test Code: 888888")
-                }
-                .font(.caption)
-                .foregroundColor(.secondary)
-                .padding(.top, 5)
             }
             .padding(.horizontal)
             
