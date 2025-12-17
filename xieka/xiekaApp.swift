@@ -14,6 +14,7 @@ struct xiekaApp: App {
     var body: some Scene {
         WindowGroup {
             MainTabView()
+                .preferredColorScheme(.light)
                 .environmentObject(store)
         }
     }
